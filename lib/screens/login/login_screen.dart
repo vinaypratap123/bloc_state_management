@@ -90,8 +90,17 @@ class _LoginScreenState extends State<LoginScreen> {
                       : const Text("Login"),
                 ),
               );
+              
             },
-          )
+          ),
+           const SizedBox(
+            height: 10,
+          ),
+          InkWell(
+            onTap: (){
+              
+            },
+            child: const Text("Login with OTP"))
         ],
       ),
     ));
