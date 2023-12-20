@@ -1,5 +1,8 @@
+import 'package:bloc_state_management/cubits/auth_cubit/auth_cubit.dart';
+import 'package:bloc_state_management/cubits/auth_cubit/auth_state.dart';
 import 'package:bloc_state_management/screens/home_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OtpScreen extends StatefulWidget {
   const OtpScreen({super.key});
@@ -9,7 +12,7 @@ class OtpScreen extends StatefulWidget {
 }
 
 class _OtpScreenState extends State<OtpScreen> {
-  TextEditingController phoneController = TextEditingController();
+  TextEditingController otpController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -21,7 +24,7 @@ class _OtpScreenState extends State<OtpScreen> {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               TextField(
-                controller: phoneController,
+                controller: otpController,
                 maxLength: 6,
                 keyboardType: TextInputType.number,
                 decoration: const InputDecoration(
@@ -32,28 +35,40 @@ class _OtpScreenState extends State<OtpScreen> {
               const SizedBox(
                 height: 20,
               ),
-              SizedBox(
-                width: 400,
-                height: 55,
-                child: ElevatedButton(
-                  onPressed: () {
-                    // if (state is LoginValidateState) {
-                    //   BlocProvider.of<LoginBloc>(context).add(
-                    //       LoginSubmittedEvent(emailController.text.toString(),
-                    //           passwordController.text.toString()));
-                    // }
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const HomeScreen()));
-                  },
-                  style: ElevatedButton.styleFrom(
-                      // backgroundColor: (state is LoginValidateState)
-                      //     ? Colors.blue
-                      //     : Colors.grey,
-                      ),
-                  // child: (state is LoginLoadingState)
-                  //     ? const CircularProgressIndicator()
-                  //     : const Text("Get OTP"),
-                  child: const Text("Verify OTP"),
-                ),
+              BlocConsumer<LoginCubit, LoginState>(
+                listener: (context, state) {
+                  if (state is LoggedInState) {
+                    Navigator.popUntil(context, (route) => route.isFirst);
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen()));
+                  } else if (state is LoginErrorState) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text(state.error),
+                      backgroundColor: Colors.red,
+                      duration: const Duration(milliseconds: 1000),
+                    ));
+                  }
+                },
+                builder: (context, state) {
+                  if (state is LoginLoadingState) {
+                    return const Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  }
+                  return SizedBox(
+                    width: 400,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        BlocProvider.of<LoginCubit>(context)
+                            .verifyOtp(otpController.text);
+                      },
+                      child: const Text("Verify OTP"),
+                    ),
+                  );
+                },
               ),
             ],
           ),

@@ -1,6 +1,7 @@
 import 'package:bloc_state_management/screens/home_screen.dart';
 import 'package:bloc_state_management/screens/login/login_bloc/login_bloc.dart';
 import 'package:bloc_state_management/screens/login/login_bloc/login_event.dart';
+import 'package:bloc_state_management/screens/login/phone_number_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -78,7 +79,10 @@ class _LoginScreenState extends State<LoginScreen> {
                           LoginSubmittedEvent(emailController.text.toString(),
                               passwordController.text.toString()));
                     }
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>const HomeScreen()));
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const HomeScreen()));
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: (state is LoginValidateState)
@@ -90,17 +94,19 @@ class _LoginScreenState extends State<LoginScreen> {
                       : const Text("Login"),
                 ),
               );
-              
             },
           ),
-           const SizedBox(
-            height: 10,
+          const SizedBox(
+            height: 20,
           ),
           InkWell(
-            onTap: (){
-              
-            },
-            child: const Text("Login with OTP"))
+              onTap: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const PhoneNumberScreen()));
+              },
+              child: const Text("Login with OTP"))
         ],
       ),
     ));
